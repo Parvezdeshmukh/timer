@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shaadi Countdown</title>
+<link href="https://fonts.googleapis.com/css2?family=Gloock&family=Hind:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F7D58B;--bg2:#F1BE5E;--fg:#3A0D1E;--accent:#9B1B45;--muted:#6E4047;--line:#3A0D1E33;--card:#FFFFFF55;--mandala:#9B1B4533;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#2A0A14;--bg2:#4A1226;--fg:#FBEFD5;--accent:#F2B134;--muted:#C9AE95;--line:#FBEFD533;--card:#FBEFD50F;--mandala:#F2B13440;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#2A0A14;--bg2:#4A1226;--fg:#FBEFD5;--accent:#F2B134;--muted:#C9AE95;--line:#FBEFD533;--card:#FBEFD50F;--mandala:#F2B13440;color-scheme:dark}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*:before,*:after{box-sizing:inherit}
+body{margin:0;min-height:100%;color:var(--fg);font-family:'Hind',system-ui,sans-serif;background:radial-gradient(circle at 50% 30%,var(--bg2),var(--bg) 70%);overflow-x:hidden;position:relative}
+#mandala{position:fixed;left:50%;top:50%;width:min(130vmin,900px);height:min(130vmin,900px);transform:translate(-50%,-50%);pointer-events:none;animation:spin 90s linear infinite;opacity:.9}
+@keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+#petals{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.petal{position:absolute;top:-30px;width:12px;height:16px;border-radius:70% 0 70% 0;background:var(--accent);opacity:.55;animation:fall linear infinite}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
+main{position:relative;min-height:100vh;max-width:620px;margin:0 auto;padding:40px 24px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:22px}
+.title{font-family:'Gloock',Georgia,serif;font-size:clamp(2.6rem,11vw,4.4rem);line-height:1.05;margin:0}
+.sub{margin:0;color:var(--muted);font-size:1.1rem}
+button.go{font:600 1.15rem 'Hind',sans-serif;color:var(--bg);background:var(--accent);border:0;border-radius:999px;padding:16px 44px;cursor:pointer;box-shadow:0 0 0 0 var(--accent);animation:pulse 2s ease-out infinite;transition:transform .15s}
+button.go:hover{transform:scale(1.05)}
+button.go:focus-visible,input:focus-visible{outline:3px solid var(--fg);outline-offset:3px}
+@keyframes pulse{0%{box-shadow:0 0 0 0 var(--accent)}70%{box-shadow:0 0 0 22px transparent}100%{box-shadow:0 0 0 0 transparent}}
+#intro{display:flex;flex-direction:column;align-items:center;gap:22px;transition:opacity .5s,transform .5s}
+#intro{position:fixed;inset:0;justify-content:center;z-index:12;padding:24px;--accent:#F2B134;--bg:#3A0D1E;--muted:#F6D9A0;--fg:#FBEFD5;color:#FBEFD5}
+#intro.hide{opacity:0;transform:scale(.92);pointer-events:none}
+.curtain{position:fixed;top:0;bottom:0;width:50.5%;z-index:10;background:repeating-linear-gradient(90deg,#5c0a21 0,#9a1439 26px,#5c0a21 54px,#350512 70px);box-shadow:inset 0 -60px 70px #0007,inset 0 60px 60px #0005;transition:transform 2.4s cubic-bezier(.65,0,.25,1)}
+.curtain.l{left:0;transform-origin:left}
+.curtain.r{right:0;transform-origin:right}
+.curtain:after{content:"";position:absolute;top:0;bottom:0;width:6px;background:linear-gradient(#F2B134,#B8780F)}
+.curtain.l:after{right:0}
+.curtain.r:after{left:0}
+.open .curtain.l{transform:translateX(-100%) scaleX(.55)}
+.open .curtain.r{transform:translateX(100%) scaleX(.55)}
+.valance{position:fixed;top:0;left:0;right:0;height:54px;z-index:11;background:linear-gradient(#F7C85A,#B8780F);border-bottom:5px solid #7A4A05;box-shadow:0 8px 20px #0006;transition:transform 1s ease-in 1.9s}
+.open .valance{transform:translateY(-110%)}
+.gone{display:none}
+body:not(.open) .valance{transition-delay:0s}
+.back{font:600 1rem 'Hind',sans-serif;color:var(--accent);background:transparent;border:2px solid var(--accent);border-radius:999px;padding:10px 28px;cursor:pointer;transition:background .2s,color .2s}
+.back:hover{background:var(--accent);color:var(--bg)}
+.back:focus-visible{outline:3px solid var(--fg);outline-offset:3px}
+#intro{overflow:hidden}
+.cut{position:relative;display:flex;align-items:center;justify-content:center}
+.rib{position:absolute;top:50%;height:44px;margin-top:-22px;width:70vw;background:linear-gradient(#E8456F,#9B1B45 55%,#E8456F);border-top:3px solid #F2B134;border-bottom:3px solid #F2B134;transition:transform 1s cubic-bezier(.5,0,1,.6),opacity 1s}
+.rib.l{right:50%;transform-origin:right center}
+.rib.r{left:50%;transform-origin:left center}
+.cut.done .rib.l{transform:rotate(-40deg) translateY(40px);opacity:0}
+.cut.done .rib.r{transform:rotate(40deg) translateY(40px);opacity:0}
+.cut .go{position:relative;z-index:1;transition:opacity .3s,transform .3s}
+.snip .go{opacity:0;transform:scale(.8);pointer-events:none}
+.sc{position:absolute;left:100%;top:50%;width:100px;height:60px;margin:-30px 0 0 12px;z-index:2;transform:scaleX(-1);transition:transform .5s ease-in-out}
+.snip .sc{transform:translateX(-106px) scaleX(-1)}
+.b1,.b2{transform-box:view-box;transform-origin:40px 30px;animation:snip 1.1s ease-in-out infinite}
+.b2{animation-name:snip2}
+@keyframes snip{50%{transform:rotate(-16deg)}}
+@keyframes snip2{50%{transform:rotate(16deg)}}
+.snip .b1,.snip .b2{animation-duration:.3s}
+#panel{display:none;width:100%;flex-direction:column;align-items:center;gap:20px}
+#panel.show{display:flex}
+#panel>*{opacity:0;transform:translateY(18px);animation:in .7s forwards}
+#panel>*:nth-child(2){animation-delay:.15s}#panel>*:nth-child(3){animation-delay:.3s}#panel>*:nth-child(4){animation-delay:.45s}#panel>*:nth-child(5){animation-delay:.6s}
+@keyframes in{to{opacity:1;transform:none}}
+.big{font-family:'Gloock',Georgia,serif;color:var(--accent);font-size:clamp(7.5rem,38vw,13rem);line-height:.9;margin:0;font-variant-numeric:tabular-nums;text-shadow:0 6px 30px var(--mandala)}
+.big-label{font-size:1.5rem;margin:0}
+.chips{display:flex;gap:12px;width:100%}
+.chip{flex:1;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 6px;backdrop-filter:blur(6px)}
+.chip b{display:block;font-family:'Gloock',Georgia,serif;font-weight:400;font-size:2.2rem;color:var(--accent);font-variant-numeric:tabular-nums}
+.chip span{font-size:.9rem;color:var(--muted)}
+.live{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:100%;border-top:1px solid var(--line);padding-top:16px}
+.live div{font-family:'Gloock',Georgia,serif;font-size:1.9rem;font-variant-numeric:tabular-nums}
+.live span{display:block;font-family:'Hind',sans-serif;font-size:.85rem;color:var(--muted)}
+.set{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:10px;color:var(--muted)}
+input[type=date]{font:inherit;color:var(--fg);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.done{font-family:'Gloock',Georgia,serif;font-size:3rem;color:var(--accent);margin:0}
+@media (prefers-reduced-motion:reduce){#mandala,.petal,button.go{animation:none}#panel>*{animation-duration:.01s;animation-delay:0s}.curtain,.valance{transition-duration:.01s;transition-delay:0s}}
+</style>
+</head>
+<body>
+<svg id="mandala" viewBox="-200 -200 400 400" aria-hidden="true"></svg>
+<div id="petals" aria-hidden="true"></div>
+<div class="curtain l" aria-hidden="true"></div>
+<div class="curtain r" aria-hidden="true"></div>
+<div class="valance" aria-hidden="true"></div>
+<main>
+  <div id="intro">
+    <div class="cut" id="cut">
+      <i class="rib l"></i><i class="rib r"></i>
+      <button class="go" id="go" type="button">Click here</button>
+      <svg class="sc" viewBox="0 0 100 60" aria-hidden="true">
+        <g class="b1"><path d="M40 30L97 27.5L97 29.5L40 33Z" fill="#E4E6EE" stroke="#3A0D1E" stroke-width=".8"/><path d="M40 31L24 40" stroke="#F2B134" stroke-width="3" stroke-linecap="round"/><circle cx="16" cy="44" r="9" fill="none" stroke="#F2B134" stroke-width="3.5"/></g>
+        <g class="b2"><g transform="translate(0 60) scale(1 -1)"><path d="M40 30L97 27.5L97 29.5L40 33Z" fill="#E4E6EE" stroke="#3A0D1E" stroke-width=".8"/><path d="M40 31L24 40" stroke="#F2B134" stroke-width="3" stroke-linecap="round"/><circle cx="16" cy="44" r="9" fill="none" stroke="#F2B134" stroke-width="3.5"/></g></g>
+        <circle cx="40" cy="30" r="3" fill="#F2B134"/>
+      </svg>
+    </div>
+  </div>
+  <section id="panel" aria-live="polite">
+    <p class="sub">Shaadi mein</p>
+    <div id="out"></div>
+    <div class="set"><label for="d">Shaadi ki date:</label><input type="date" id="d" value="2027-04-01"></div>
+    <button class="back" id="back" type="button">← Wapas</button>
+  </section>
+</main>
+<script>
+(function(){
+  // mandala
+  var s='',i,R=['#mandala'];
+  for(i=0;i<16;i++)s+='<ellipse cx="0" cy="-150" rx="16" ry="46" transform="rotate('+i*22.5+')"/>';
+  for(i=0;i<24;i++)s+='<ellipse cx="0" cy="-95" rx="9" ry="26" transform="rotate('+(i*15+7.5)+')"/>';
+  for(i=0;i<12;i++)s+='<ellipse cx="0" cy="-48" rx="10" ry="24" transform="rotate('+i*30+')"/>';
+  s+='<circle r="190"/><circle r="104"/><circle r="22"/>';
+  var m=document.getElementById('mandala');
+  m.innerHTML='<g fill="none" stroke="var(--mandala)" stroke-width="1.6">'+s+'</g>';
+  // petals
+  var pe=document.getElementById('petals'),p;
+  for(i=0;i<16;i++){p=document.createElement('i');p.className='petal';
+    p.style.left=Math.random()*100+'%';p.style.animationDuration=(9+Math.random()*10)+'s';
+    p.style.animationDelay=(-Math.random()*18)+'s';p.style.transform='scale('+(.6+Math.random()*.9)+')';pe.appendChild(p);}
+  // countdown
+  var KEY='wedding-date',inp=document.getElementById('d'),out=document.getElementById('out'),shown=false,t0=0;
+  try{var sv=localStorage.getItem(KEY);if(sv)inp.value=sv;}catch(e){}
+  inp.addEventListener('change',function(){try{localStorage.setItem(KEY,inp.value)}catch(e){}render();});
+  var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function render(){
+    var t=new Date(inp.value+'T00:00:00'),now=new Date();
+    if(isNaN(t)){out.innerHTML='<p>Date chuniye.</p>';return;}
+    var ms=t-now;
+    if(ms<=0){out.innerHTML='<p class="done">Shubh Vivah! 🎉</p>';return;}
+    var mo=(t.getFullYear()-now.getFullYear())*12+t.getMonth()-now.getMonth();
+    function at(n){return new Date(now.getFullYear(),now.getMonth()+n,now.getDate(),now.getHours(),now.getMinutes(),now.getSeconds());}
+    if(at(mo)>t)mo--;
+    var d=Math.floor((t-at(mo))/864e5),days=Math.ceil(ms/864e5),wk=Math.floor(days/7);
+    var h=Math.floor(ms/36e5)%24,mi=Math.floor(ms/6e4)%60,se=Math.floor(ms/1e3)%60;
+    var f=1;if(!reduce&&t0){f=Math.min(1,(Date.now()-t0)/1600);f=1-Math.pow(1-f,3);}
+    out.innerHTML='<p class="big">'+Math.round(days*f)+'</p><p class="big-label">din baki hain</p>'+
+      '<div class="chips" style="margin-top:20px"><div class="chip"><b>'+mo+'</b><span>mahine</span></div><div class="chip"><b>'+d+'</b><span>din</span></div><div class="chip"><b>'+wk+'</b><span>hafte</span></div></div>'+
+      '<div class="live" style="margin-top:16px"><div>'+Math.floor(ms/864e5)+'<span>din</span></div><div>'+h+'<span>ghante</span></div><div>'+mi+'<span>minute</span></div><div>'+se+'<span>second</span></div></div>';
+  }
+  document.getElementById('go').addEventListener('click',function(){
+    document.getElementById('intro').classList.add('snip');
+    setTimeout(function(){document.getElementById('cut').classList.add('done');},1000);
+    setTimeout(function(){document.getElementById('intro').classList.add('hide');document.body.classList.add('open');},1400);
+    setTimeout(function(){document.getElementById('panel').classList.add('show');t0=Date.now();render();},2300);
+    setTimeout(function(){document.querySelectorAll('.curtain,.valance').forEach(function(e){e.classList.add('gone');});},4700);
+  });
+  document.getElementById('back').addEventListener('click',function(){
+    document.querySelectorAll('.curtain,.valance').forEach(function(e){e.classList.remove('gone');});
+    void document.body.offsetWidth;
+    document.body.classList.remove('open');
+    setTimeout(function(){var i=document.getElementById('intro');i.classList.remove('snip');document.getElementById('cut').classList.remove('done');i.classList.remove('hide');},2000);
+    setTimeout(function(){document.getElementById('panel').classList.remove('show');t0=0;},2500);
+  });
+  setInterval(function(){if(document.getElementById('panel').classList.contains('show'))render();},t0?1000:100);
+  setInterval(function(){if(document.getElementById('panel').classList.contains('show')&&Date.now()-t0>1700)render();},1000);
+})();
+</script>
+</body>
+</html>
